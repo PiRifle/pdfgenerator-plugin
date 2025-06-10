@@ -8,13 +8,13 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ChromePdfGenerator
 {
-    public string $executable;
-    public array $options = ['--no-sandbox',
+    protected  string $executable;
+    protected  array $options = ['--no-sandbox',
         '--headless=new',
         '--disable-gpu',
         '--run-all-compositor-stages-before-draw',
         '--virtual-time-budget=5000'];
-    public string $baseTemp;
+    protected  string $baseTemp;
 
     public function __construct($storagePath = "app/tmp", $executable = "google-chrome-stable"){
         // Prepare base temp directory
@@ -23,20 +23,36 @@ class ChromePdfGenerator
         $this->prepareCatalog();
     }
 
-    public function prepareBaseTemp($storagePath){
+    protected function prepareBaseTemp($storagePath){
         $this->baseTemp = storage_path($storagePath);
         if (!is_dir($this->baseTemp)) {
             mkdir($this->baseTemp, 0755, true);
         }
     }
 
-    public function prepareCatalog(){
+    protected  function prepareCatalog(){
         // Create isolated user-data-dir for Chrome
         $userDataDir = $this->baseTemp . DIRECTORY_SEPARATOR . 'chrome_user_data';
         if (!is_dir($userDataDir)) {
             mkdir($userDataDir, 0700, true);
         }
         $this->options[] = '--user-data-dir=' . escapeshellarg($userDataDir);
+    }
+
+    protected function buildCliParams(array $options): array {
+        $params = [];
+
+        foreach ($options as $key => $value) {
+            if (is_bool($value)) {
+                if ($value) {
+                    $params[] = "--$key";
+                }
+            } else {
+                $params[] = "--$key=" . escapeshellarg($value);
+            }
+        }
+
+        return $params;
     }
 
     /**
@@ -64,7 +80,7 @@ class ChromePdfGenerator
         $this->options[] = "--print-to-pdf=" . escapeshellarg($outputPath);
 
         // Build full command and merge stderr/stdout
-        $cmd = array_merge([$this->executable], $this->options, $options, [escapeshellarg($htmlPath)]);
+        $cmd = array_merge([$this->executable], $this->options, $this->buildCliParams($options), [escapeshellarg($htmlPath)]);
         $cmdString = implode(' ', $cmd) . ' 2>&1';
         $process = Process::fromShellCommandline($cmdString);
         $process->setTimeout(null);

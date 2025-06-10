@@ -23,6 +23,7 @@
         'pdf_engine_label' => 'Engine Used',
         'pdf_engine_comment' => 'Select the engine you want to use, Snappypdf is the reliable and secure pick. Google chrome is experimental, allows rendering modern js and css!',
         'pdf_binary_comment_chrome' => 'Path of your google-chrome binary',
+        'pdf_generator_options_comment_chrome' => 'key-value pair for google chrome cli options',
     ],
     'permissions' => [
         'pdfgenerator_tab' => 'PDF Generator',

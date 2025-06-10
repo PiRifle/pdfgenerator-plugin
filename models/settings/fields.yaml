@@ -13,6 +13,7 @@ tabs:
                     value:
                         type: text
                         span: auto
+            dependsOn: [pdf_engine]
 
         pdf_tokenize:
             label: initbiz.pdfgenerator::lang.settings.pdf_tokenize_label

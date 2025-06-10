@@ -42,10 +42,15 @@ class Settings extends Model
     {
         $engine = post('pdf_engine', $this->pdf_engine);
 
-        if ($engine === 'snappy') {
-            $fields->pdf_binary->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_binary_comment';
-        } else if ($engine === 'chrome') {
-            $fields->pdf_binary->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_binary_comment_chrome';
-        }
+        // let it fail
+        try {
+            if ($engine === 'snappy') {
+                $fields->pdf_generator_options->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_generator_options_comment';
+                $fields->pdf_binary->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_binary_comment';
+            } else if ($engine === 'chrome') {
+                $fields->pdf_generator_options->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_generator_options_comment_chrome';
+                $fields->pdf_binary->commentAbove = 'initbiz.pdfgenerator::lang.settings.pdf_binary_comment_chrome';
+            }
+        }catch (\Exception $ex){}
     }
 }
